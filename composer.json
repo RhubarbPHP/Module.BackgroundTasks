@@ -1,17 +1,19 @@
 {
-  "name": "rhubarbphp/module-patterns",
-  "description": "Provides some common user interface and design patterns.",
-  "keywords": [ "patterns", "rhubarb", "php", "framework" ],
+  "name": "rhubarbphp/module-background-tasks",
+  "description": "Provides a background task processing module.",
+  "keywords": [ "background", "task", "rhubarb", "php", "framework" ],
   "homepage": "http://www.rhubarbphp.com/",
   "license": "Apache-2.0",
   "autoload": {
     "psr-4": {
-      "Rhubarb\\Patterns\\": "src/",
-      "Rhubarb\\Patterns\\Tests\\": "tests/"
+      "Rhubarb\\BackgroundTasks\\": "src/",
+      "Rhubarb\\BackgroundTasks\\Tests\\": "tests/"
     }
   },
   "require": {
-    "rhubarbphp/rhubarb": "*"
+    "rhubarbphp/rhubarb": "*",
+    "rhubarbphp/module-stem": "*",
+    "rhubarbphp/module-leaf": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "3.*"
