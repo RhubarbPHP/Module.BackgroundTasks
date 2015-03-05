@@ -1,0 +1,19 @@
+{
+  "name": "rhubarbphp/module-patterns",
+  "description": "Provides some common user interface and design patterns.",
+  "keywords": [ "patterns", "rhubarb", "php", "framework" ],
+  "homepage": "http://www.rhubarbphp.com/",
+  "license": "Apache-2.0",
+  "autoload": {
+    "psr-4": {
+      "Rhubarb\\Patterns\\": "src/",
+      "Rhubarb\\Patterns\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "rhubarbphp/rhubarb": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "3.*"
+  }
+}
