@@ -5,7 +5,7 @@ namespace Rhubarb\BackgroundTasks;
 use Rhubarb\Crown\Module;
 use Rhubarb\Stem\Schema\SolutionSchema;
 
-class BackgroundTaskModule extends Module
+class BackgroundTasksModule extends Module
 {
     protected function initialise()
     {

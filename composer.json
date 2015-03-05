@@ -11,6 +11,7 @@
     }
   },
   "require": {
+    "ext-pcntl": "*",
     "rhubarbphp/rhubarb": "*",
     "rhubarbphp/module-stem": "*",
     "rhubarbphp/module-leaf": "*"

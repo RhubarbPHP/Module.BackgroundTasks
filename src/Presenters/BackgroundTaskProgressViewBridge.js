@@ -1,17 +1,17 @@
 var bridge = function (presenterPath)
 {
-    window.gcd.core.mvp.viewBridgeClasses.HtmlViewBridge.apply( this, arguments );
-
     // Default the poll rate to 1 second.
-    this.pollRate = 1;
+    this.pollRate = 1000;
 
+    window.gcd.core.mvp.viewBridgeClasses.HtmlViewBridge.apply( this, arguments );
+};
+
+bridge.prototype.onStateLoaded = function()
+{
     if ( this.model.pollRate )
     {
-        this.pollRate = this.model.pollRate;
+        this.pollRate = this.model.pollRate * 1000;
     }
-
-    this.progressNode = this.viewNode.querySelector( '.progress' );
-    this.messageNode = this.viewNode.querySelector( '.message' );
 };
 
 bridge.prototype = new window.gcd.core.mvp.viewBridgeClasses.HtmlViewBridge();
@@ -21,7 +21,10 @@ bridge.prototype.attachEvents = function ()
 {
     var self = this;
 
-    setInterval( function()
+    this.progressNode = this.viewNode.querySelector( '.progress' );
+    this.messageNode = this.viewNode.querySelector( '.message' );
+
+    this.pollInterval = setInterval( function()
     {
         self.pollProgress();
     }, this.pollRate );
@@ -33,13 +36,15 @@ bridge.prototype.pollProgress = function()
 
     this.raiseServerEvent( "GetProgress", function( response )
     {
-        self.progressNode.style = "width: " + response.percentageComplete + "%";
+        self.progressNode.style.width = response.percentageComplete + "%";
         self.messageNode.innerHTML = response.message;
 
         if ( response.percentageComplete >= 100 )
         {
             self.onComplete();
             self.raiseClientEvent( "OnComplete" );
+
+            clearInterval( self.pollInterval );
         }
     });
 };

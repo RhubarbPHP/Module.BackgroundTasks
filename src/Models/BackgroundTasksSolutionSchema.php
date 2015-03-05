@@ -10,6 +10,6 @@ class BackgroundTasksSolutionSchema extends SolutionSchema
     {
         parent::__construct(0.1);
 
-        $this->addModel("BackgroundTask", __NAMESPACE__.'\BackgroundTask');
+        $this->addModel("BackgroundTaskStatus", __NAMESPACE__.'\BackgroundTaskStatus');
     }
 }
