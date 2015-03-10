@@ -18,12 +18,21 @@
 
 namespace Rhubarb\BackgroundTasks\Presenters;
 
-require_once __DIR__ . '/BackgroundTaskPresenter.php';
+use Rhubarb\Leaf\Views\HtmlView;
 
-class BackgroundTaskProgressPresenter extends BackgroundTaskPresenter
+class BackgroundTaskFullFocusView extends HtmlView
 {
-    protected function createView()
+    public function getDeploymentPackage()
     {
-        return new BackgroundTaskProgressView();
+        $package = parent::getDeploymentPackage();
+        $package->resourcesToDeploy[] = __DIR__.'/BackgroundTaskViewBridge.js';
+        $package->resourcesToDeploy[] = __DIR__.'/BackgroundTaskFullFocusViewBridge.js';
+
+        return $package;
+    }
+
+    protected function getClientSideViewBridgeName()
+    {
+        return "BackgroundTaskFullFocusViewBridge";
     }
 }
