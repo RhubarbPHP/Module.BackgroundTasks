@@ -1,11 +1,11 @@
 <?php
 
-namespace Rhubarb\BackgroundTasks\Tests;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Tests;
 
-use Rhubarb\BackgroundTasks\Models\BackgroundTasksSolutionSchema;
-use Rhubarb\BackgroundTasks\Models\BackgroundTaskStatus;
-use Rhubarb\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskOne;
-use Rhubarb\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskTwo;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTasksSolutionSchema;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskOne;
+use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskTwo;
 use Rhubarb\Crown\Tests\AppTestCase;
 
 /*

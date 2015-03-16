@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Scripts;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Scripts;
 
-use Rhubarb\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 $taskId = intval( $argv[2] );
 

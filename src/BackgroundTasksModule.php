@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks;
+namespace Rhubarb\Scaffolds\BackgroundTasks;
 
 use Rhubarb\Crown\Module;
 use Rhubarb\Stem\Schema\SolutionSchema;

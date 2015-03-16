@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Models;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 
 require_once __DIR__.'/../../../module-stem/src/Schema/SolutionSchema.php';
 

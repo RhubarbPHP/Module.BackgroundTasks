@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
 require_once __DIR__ . '/BackgroundTaskPresenter.php';
 

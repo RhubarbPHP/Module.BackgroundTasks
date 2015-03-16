@@ -16,10 +16,10 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Tests\Fixtures;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures;
 
-use Rhubarb\BackgroundTasks\BackgroundTask;
-use Rhubarb\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 class UnitTestBackgroundTaskOne extends BackgroundTask
 {

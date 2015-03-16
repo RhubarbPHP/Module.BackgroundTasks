@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
-use Rhubarb\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Leaf\Presenters\HtmlPresenter;
 
 class BackgroundTaskPresenter extends HtmlPresenter

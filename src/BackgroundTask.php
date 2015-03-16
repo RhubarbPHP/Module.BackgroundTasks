@@ -16,9 +16,9 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks;
+namespace Rhubarb\Scaffolds\BackgroundTasks;
 
-use Rhubarb\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 /**
  * Extend this class to create an executable BackgroundTask

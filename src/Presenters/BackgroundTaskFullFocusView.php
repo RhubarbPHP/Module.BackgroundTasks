@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
 use Rhubarb\Leaf\Views\HtmlView;
 
