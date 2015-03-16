@@ -1,13 +1,13 @@
 {
-  "name": "rhubarbphp/module-background-tasks",
+  "name": "rhubarbphp/scaffold-background-tasks",
   "description": "Provides a background task processing module.",
   "keywords": [ "background", "task", "rhubarb", "php", "framework" ],
   "homepage": "http://www.rhubarbphp.com/",
   "license": "Apache-2.0",
   "autoload": {
     "psr-4": {
-      "Rhubarb\\BackgroundTasks\\": "src/",
-      "Rhubarb\\BackgroundTasks\\Tests\\": "tests/"
+      "Rhubarb\\Scaffolds\\BackgroundTasks\\": "src/",
+      "Rhubarb\\Scaffolds\\BackgroundTasks\\Tests\\": "tests/"
     }
   },
   "require": {
