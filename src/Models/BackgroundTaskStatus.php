@@ -22,12 +22,12 @@ require_once __DIR__ . '/../../../module-stem/src/Models/Model.php';
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
 use Rhubarb\Stem\Models\Model;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\AutoIncrement;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\Decimal;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\Enum;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MediumText;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\Varchar;
-use Rhubarb\Stem\Repositories\MySql\Schema\MySqlSchema;
+use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnum;
+use Rhubarb\Stem\Schema\Columns\AutoIncrement;
+use Rhubarb\Stem\Schema\Columns\Decimal;
+use Rhubarb\Stem\Schema\Columns\LongString;
+use Rhubarb\Stem\Schema\Columns\String;
+use Rhubarb\Stem\Schema\ModelSchema;
 
 /**
  * Allows for execution of background tasks and persistence of progress data in a model.
@@ -47,14 +47,14 @@ class BackgroundTaskStatus extends Model
      */
     protected function createSchema()
     {
-        $schema = new MySqlSchema("tblBackgroundTaskStatus");
+        $schema = new ModelSchema("tblBackgroundTaskStatus");
         $schema->addColumn(
             new AutoIncrement("BackgroundTaskStatusID"),
-            new Varchar( "TaskClass", 300 ),
-            new Enum("TaskStatus", "Running", [ "Running", "Complete", "Failed" ] ),
+            new String( "TaskClass", 300 ),
+            new MySqlEnum("TaskStatus", "Running", [ "Running", "Complete", "Failed" ] ),
             new Decimal("PercentageComplete", "5,2", 0),
-            new Varchar("Message",200),
-            new MediumText("ExceptionDetails")
+            new String("Message",200),
+            new LongString("ExceptionDetails")
         );
 
         return $schema;
