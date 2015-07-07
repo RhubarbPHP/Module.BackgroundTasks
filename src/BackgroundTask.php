@@ -37,11 +37,12 @@ abstract class BackgroundTask
      *
      * @return BackgroundTaskStatus The status object for this task.
      */
-    public static function initiate()
+    public static function initiate( $settings = [] )
     {
         // Create an entry in our database.
         $task = new BackgroundTaskStatus();
         $task->TaskClass = get_called_class();
+        $task->TaskSettings = $settings;
         $task->save();
 
         $command = "/usr/bin/php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . $task->BackgroundTaskStatusID . " > /dev/null 2>&1 &";

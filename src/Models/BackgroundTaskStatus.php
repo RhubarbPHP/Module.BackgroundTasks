@@ -25,6 +25,7 @@ use Rhubarb\Stem\Models\Model;
 use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnum;
 use Rhubarb\Stem\Schema\Columns\AutoIncrement;
 use Rhubarb\Stem\Schema\Columns\Decimal;
+use Rhubarb\Stem\Schema\Columns\Json;
 use Rhubarb\Stem\Schema\Columns\LongString;
 use Rhubarb\Stem\Schema\Columns\String;
 use Rhubarb\Stem\Schema\ModelSchema;
@@ -40,6 +41,10 @@ use Rhubarb\Stem\Schema\ModelSchema;
  */
 class BackgroundTaskStatus extends Model
 {
+    const TASK_STATUS_RUNNING = "Running";
+    const TASK_STATUS_COMPLETE = "Complete";
+    const TASK_STATUS_FAILED = "Failed";
+
     /**
      * Returns the schema for this data object.
      *
@@ -51,10 +56,12 @@ class BackgroundTaskStatus extends Model
         $schema->addColumn(
             new AutoIncrement("BackgroundTaskStatusID"),
             new String( "TaskClass", 300 ),
-            new MySqlEnum("TaskStatus", "Running", [ "Running", "Complete", "Failed" ] ),
-            new Decimal("PercentageComplete", "5,2", 0),
+            new MySqlEnum( "TaskStatus", self::TASK_STATUS_RUNNING,
+                [ self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING ] ),
+            new Decimal("PercentageComplete", 5, 2, 0),
             new String("Message",200),
-            new LongString("ExceptionDetails")
+            new LongString("ExceptionDetails"),
+            new Json( "TaskSettings" )
         );
 
         return $schema;
