@@ -20,17 +20,29 @@ namespace Rhubarb\Scaffolds\BackgroundTasks\Scripts;
 
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
-$taskId = intval( $argv[2] );
+$taskClass = $argv[2];
+
+if ( !$taskClass )
+{
+    die( "No background task specified" );
+}
+
+$taskId = intval( $argv[3] );
 
 if ( !$taskId )
 {
     die( "No background task specified" );
 }
 
+// Get additional arguments passed to the task runner.
+// See docs for more details on passing shell arguments.
+$additionalArguments = array_slice($argv,4);
+
+$taskClass::setShellArguments($additionalArguments);
+
 $pid = pcntl_fork();
 
 if( $pid ){
-    print "Spawned $pid";
     exit;
 }
 

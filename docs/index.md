@@ -22,7 +22,7 @@ class MyTask extends BackgroundTask
 }
 ~~~
 
-Now static `initiate()` function on this class to start the background task running.
+Now call the static `initiate()` function on this class to start the background task running.
 
 ~~~php
 $status = MyTask::initiate();
@@ -49,6 +49,74 @@ BackgroundTaskStatus::$PercentageComplete
 :   Returns the completion status as a percentage
 BackgroundTaskStatus::$Message
 :   Returns a message about what the task is currently doing
+
+## Passing arguments to the task runner
+
+In some circumstances you need to pass arguments to the task running on the background thread. There are
+two types of arguments; standard arguments and shell arguments.
+
+### Standard Arguments
+
+If you pass an array to the initiate() function, this array will be available to your background task in its
+execute function by accessing the `TaskSettings` property of the status object:
+
+~~~php
+$status = TerminatorTask::initiate(
+    [
+        "Mission" => "destroy",
+        "Target" => "humans"
+    ]);
+~~~
+
+~~~php
+class TerminatorTask extends BackgroundTask
+{
+    public function execute( BackgroundTaskStatus $status )
+    {
+        // Pick up task settings from the array.
+        if ( $status->TaskSettings["Mission"] == "destroy" ) {
+            $target = $status->TaskSettings["Target"];
+        }
+    }
+}
+~~~
+
+### Shell arguments
+
+Sometimes arguments need to be passed to the task before database access is available. Most often this is
+when access to the database is only possible using values only the parent task knew. In this case these values
+must be passed to the task runner.
+
+> Passing shell arguments is a big security risk. Those arguments will be visible should an attacker be able to
+> get a process list from your server. If you are passing shell arguments you are strongly advised to encrypt them
+> or provide some other interim step in calculating the required values. As the BackgroundTask scaffold is
+> open source and the source code freely available we don't provide any encryption by default as it would be
+> too easy to decrypt.
+
+To ensure security is adequately considered there is no mechanism for simply passing shell arguments as you can
+with standard arguments. Instead you must override the static `getAdditionalTaskRunnerArguments()` function and
+return an array of the arguments to pass. The arguments can be retrieved in the `execute()` method by accessing
+the $shellArguments class field:
+
+~~~php
+class TerminatorTask extends BackgroundTask
+{
+    protected static function getAdditionalTaskRunnerArguments()
+    {
+        // Note these values are insecure - they should be encrypted.
+        return [ "command-hq", "arnie", "letmein123" ];
+    }
+
+    public function execute( BackgroundTaskStatus $status )
+    {
+        // Connect to command and control
+        $settings = new ModellingSetings();
+        $settings->DbHost = $this->shellArguments[0];
+        $settings->DbUsername = $this->shellArguments[1];
+        $settings->DbPassword = $this->shellArguments[2];
+    }
+}
+~~~
 
 ## Handling background tasks from the user interface.
 

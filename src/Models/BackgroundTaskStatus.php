@@ -61,7 +61,7 @@ class BackgroundTaskStatus extends Model
             new Decimal("PercentageComplete", 5, 2, 0),
             new String("Message",200),
             new LongString("ExceptionDetails"),
-            new Json( "TaskSettings" )
+            new Json( "TaskSettings", null, true )
         );
 
         return $schema;
@@ -69,6 +69,9 @@ class BackgroundTaskStatus extends Model
 
     /**
      * Starts the background task by instantiating the task class and calling execute.
+     *
+     * @throws \Exception
+     * @throws \Rhubarb\Stem\Exceptions\ModelConsistencyValidationException
      */
     public function start()
     {
@@ -76,7 +79,9 @@ class BackgroundTaskStatus extends Model
         $task = new $class();
 
         try {
+            $task->setShellArguments();
             $task->execute($this);
+
             $this->TaskStatus = "Complete";
         } catch ( RhubarbException $er ) {
             $this->TaskStatus = "Failed";
