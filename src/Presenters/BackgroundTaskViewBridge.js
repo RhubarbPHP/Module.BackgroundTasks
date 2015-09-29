@@ -4,10 +4,10 @@ var bridge = function (presenterPath) {
         this.pollRate = 1000;
     }
 
-    window.gcd.core.mvp.viewBridgeClasses.HtmlViewBridge.apply(this, arguments);
+    window.rhubarb.viewBridgeClasses.HtmlViewBridge.apply(this, arguments);
 };
 
-bridge.prototype = new window.gcd.core.mvp.viewBridgeClasses.HtmlViewBridge();
+bridge.prototype = new window.rhubarb.viewBridgeClasses.HtmlViewBridge();
 bridge.prototype.constructor = bridge;
 
 bridge.prototype.onStateLoaded = function () {
@@ -69,4 +69,4 @@ bridge.prototype.onProgressReported = function (progress) {
 bridge.prototype.onComplete = function () {
 };
 
-window.gcd.core.mvp.viewBridgeClasses.BackgroundTaskViewBridge = bridge;
+window.rhubarb.viewBridgeClasses.BackgroundTaskViewBridge = bridge;
