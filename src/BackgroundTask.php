@@ -18,6 +18,7 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks;
 
+use Rhubarb\Crown\Context;
 use Rhubarb\Crown\Logging\Log;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
@@ -79,7 +80,17 @@ abstract class BackgroundTask
             $additionalArgumentString .= escapeshellarg($argument);
         }
 
-        $command = "/usr/bin/php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg( get_called_class() )." ".$task->BackgroundTaskStatusID . " ".$additionalArgumentString." > /dev/null 2>&1 &";
+        $context = new Context();
+        if ($context->PhpIdeConfig) {
+            // This setting can be used to make command line tasks use a named configuration
+            // in your IDE - this matches up to the PHP Server name in PhpStorm, found in
+            // Settings -> Languages and Frameworks -> PHP -> Servers -> Name
+            $command = 'export PHP_IDE_CONFIG="serverName='.$context->PhpIdeConfig.'";';
+        } else {
+            $command = '';
+        }
+
+        $command .= "/usr/bin/php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg( get_called_class() )." ".$task->BackgroundTaskStatusID . " ".$additionalArgumentString." > /dev/null 2>&1 &";
 
         Log::debug( "Launching background task ".$task->UniqueIdentifier, "BACKGROUND", $command );
 
