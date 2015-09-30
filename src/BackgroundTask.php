@@ -55,7 +55,7 @@ abstract class BackgroundTask
      *
      * @param $rawShellArguments
      */
-    public static function setShellArguments( $rawShellArguments )
+    public static function setShellArguments($rawShellArguments)
     {
         self::$shellArguments = $rawShellArguments;
     }
@@ -65,7 +65,7 @@ abstract class BackgroundTask
      *
      * @return BackgroundTaskStatus The status object for this task.
      */
-    public static function initiate( $settings = [] )
+    public static function initiate($settings = [])
     {
         // Create an entry in our database.
         $task = new BackgroundTaskStatus();
@@ -76,7 +76,7 @@ abstract class BackgroundTask
         $additionalArguments = static::getAdditionalTaskRunnerArguments();
         $additionalArgumentString = "";
 
-        foreach( $additionalArguments as $argument ){
+        foreach ($additionalArguments as $argument) {
             $additionalArgumentString .= escapeshellarg($argument);
         }
 
@@ -85,14 +85,15 @@ abstract class BackgroundTask
             // This setting can be used to make command line tasks use a named configuration
             // in your IDE - this matches up to the PHP Server name in PhpStorm, found in
             // Settings -> Languages and Frameworks -> PHP -> Servers -> Name
-            $command = 'export PHP_IDE_CONFIG="serverName='.$context->PhpIdeConfig.'";';
+
+            $command = 'export PHP_IDE_CONFIG=' . escapeshellarg('serverName=' . $context->PhpIdeConfig) . ';';
         } else {
             $command = '';
         }
 
-        $command .= "/usr/bin/php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg( get_called_class() )." ".$task->BackgroundTaskStatusID . " ".$additionalArgumentString." > /dev/null 2>&1 &";
+        $command .= "/usr/bin/php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
 
-        Log::debug( "Launching background task ".$task->UniqueIdentifier, "BACKGROUND", $command );
+        Log::debug("Launching background task " . $task->UniqueIdentifier, "BACKGROUND", $command);
 
         exec($command);
 
