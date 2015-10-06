@@ -51,4 +51,5 @@ if (posix_setsid() < 0) {
 }
 
 $task = new BackgroundTaskStatus( $taskId );
+$task->ProcessID = getmypid();
 $task->start();
