@@ -28,7 +28,7 @@ use Rhubarb\Stem\Schema\Columns\Decimal;
 use Rhubarb\Stem\Schema\Columns\Integer;
 use Rhubarb\Stem\Schema\Columns\Json;
 use Rhubarb\Stem\Schema\Columns\LongString;
-use Rhubarb\Stem\Schema\Columns\String;
+use Rhubarb\Stem\Schema\Columns\StringColumn;
 use Rhubarb\Stem\Schema\ModelSchema;
 
 /**
@@ -56,11 +56,11 @@ class BackgroundTaskStatus extends Model
         $schema = new ModelSchema( "tblBackgroundTaskStatus" );
         $schema->addColumn(
                 new AutoIncrement( "BackgroundTaskStatusID" ),
-                new String( "TaskClass", 300 ),
+                new StringColumn( "TaskClass", 300 ),
                 new MySqlEnum( "TaskStatus", self::TASK_STATUS_RUNNING,
                         [ self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING ] ),
                 new Decimal( "PercentageComplete", 5, 2, 0 ),
-                new String( "Message", 200 ),
+                new StringColumn( "Message", 200 ),
                 new LongString( "ExceptionDetails" ),
                 new Json( "TaskSettings", null, true ),
                 new Integer( "ProcessID" )
