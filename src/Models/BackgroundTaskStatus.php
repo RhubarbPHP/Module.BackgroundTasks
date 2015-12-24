@@ -22,13 +22,13 @@ require_once __DIR__ . '/../../../module-stem/src/Models/Model.php';
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
 use Rhubarb\Stem\Models\Model;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnum;
-use Rhubarb\Stem\Schema\Columns\AutoIncrement;
-use Rhubarb\Stem\Schema\Columns\Decimal;
-use Rhubarb\Stem\Schema\Columns\Integer;
-use Rhubarb\Stem\Schema\Columns\Json;
-use Rhubarb\Stem\Schema\Columns\LongString;
-use Rhubarb\Stem\Schema\Columns\String;
+use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnumColumn;
+use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
+use Rhubarb\Stem\Schema\Columns\DecimalColumn;
+use Rhubarb\Stem\Schema\Columns\IntegerColumn;
+use Rhubarb\Stem\Schema\Columns\JsonColumn;
+use Rhubarb\Stem\Schema\Columns\LongStringColumn;
+use Rhubarb\Stem\Schema\Columns\StringColumn;
 use Rhubarb\Stem\Schema\ModelSchema;
 
 /**
@@ -55,15 +55,15 @@ class BackgroundTaskStatus extends Model
     {
         $schema = new ModelSchema( "tblBackgroundTaskStatus" );
         $schema->addColumn(
-                new AutoIncrement( "BackgroundTaskStatusID" ),
-                new String( "TaskClass", 300 ),
-                new MySqlEnum( "TaskStatus", self::TASK_STATUS_RUNNING,
+                new AutoIncrementColumn( "BackgroundTaskStatusID" ),
+                new StringColumn( "TaskClass", 300 ),
+                new MySqlEnumColumn( "TaskStatus", self::TASK_STATUS_RUNNING,
                         [ self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING ] ),
-                new Decimal( "PercentageComplete", 5, 2, 0 ),
-                new String( "Message", 200 ),
-                new LongString( "ExceptionDetails" ),
-                new Json( "TaskSettings", null, true ),
-                new Integer( "ProcessID" )
+                new DecimalColumn( "PercentageComplete", 5, 2, 0 ),
+                new StringColumn( "Message", 200 ),
+                new LongStringColumn( "ExceptionDetails" ),
+                new JsonColumn( "TaskSettings", null, true ),
+                new IntegerColumn( "ProcessID" )
         );
 
         return $schema;
