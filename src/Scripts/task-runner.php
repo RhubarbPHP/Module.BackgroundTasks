@@ -22,27 +22,25 @@ use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 $taskClass = $argv[2];
 
-if ( !$taskClass )
-{
-    die( "No background task specified" );
+if (!$taskClass) {
+    die("No background task specified");
 }
 
-$taskId = intval( $argv[3] );
+$taskId = intval($argv[3]);
 
-if ( !$taskId )
-{
-    die( "No background task specified" );
+if (!$taskId) {
+    die("No background task specified");
 }
 
 // Get additional arguments passed to the task runner.
 // See docs for more details on passing shell arguments.
-$additionalArguments = array_slice($argv,4);
+$additionalArguments = array_slice($argv, 4);
 
 $taskClass::setShellArguments($additionalArguments);
 
 $pid = pcntl_fork();
 
-if( $pid ){
+if ($pid) {
     exit;
 }
 
@@ -50,6 +48,6 @@ if (posix_setsid() < 0) {
     exit;
 }
 
-$task = new BackgroundTaskStatus( $taskId );
+$task = new BackgroundTaskStatus($taskId);
 $task->ProcessID = getmypid();
 $task->start();

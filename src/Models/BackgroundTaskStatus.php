@@ -35,7 +35,7 @@ use Rhubarb\Stem\Schema\ModelSchema;
  * Allows for execution of background tasks and persistence of progress data in a model.
  *
  * @property string $TaskClass
- * @property float  $PercentageComplete
+ * @property float $PercentageComplete
  * @property string $Message
  * @property string $TaskStatus       The status of the task: Running, Complete or Failed
  * @property string $ExceptionDetails If the task failed, exception details will be contained here.
@@ -53,17 +53,17 @@ class BackgroundTaskStatus extends Model
      */
     protected function createSchema()
     {
-        $schema = new ModelSchema( "tblBackgroundTaskStatus" );
+        $schema = new ModelSchema("tblBackgroundTaskStatus");
         $schema->addColumn(
-                new AutoIncrementColumn( "BackgroundTaskStatusID" ),
-                new StringColumn( "TaskClass", 300 ),
-                new MySqlEnumColumn( "TaskStatus", self::TASK_STATUS_RUNNING,
-                        [ self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING ] ),
-                new DecimalColumn( "PercentageComplete", 5, 2, 0 ),
-                new StringColumn( "Message", 200 ),
-                new LongStringColumn( "ExceptionDetails" ),
-                new JsonColumn( "TaskSettings", null, true ),
-                new IntegerColumn( "ProcessID" )
+            new AutoIncrementColumn("BackgroundTaskStatusID"),
+            new StringColumn("TaskClass", 300),
+            new MySqlEnumColumn("TaskStatus", self::TASK_STATUS_RUNNING,
+                [self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING]),
+            new DecimalColumn("PercentageComplete", 5, 2, 0),
+            new StringColumn("Message", 200),
+            new LongStringColumn("ExceptionDetails"),
+            new JsonColumn("TaskSettings", null, true),
+            new IntegerColumn("ProcessID")
         );
 
         return $schema;
@@ -82,10 +82,10 @@ class BackgroundTaskStatus extends Model
 
         try {
             $task->setShellArguments();
-            $task->execute( $this );
+            $task->execute($this);
 
             $this->TaskStatus = "Complete";
-        } catch( RhubarbException $er ) {
+        } catch (RhubarbException $er) {
             $this->TaskStatus = "Failed";
             $this->ExceptionDetails = $er->getMessage() . "\r\n\r\n" . $er->getTraceAsString();
         }

@@ -37,6 +37,6 @@ class UnitTestBackgroundTaskTwo extends BackgroundTask
         $status->Message = "Bar";
         $status->save();
 
-        touch( "cache/background-task-test.txt" );
+        touch("cache/background-task-test.txt");
     }
 }

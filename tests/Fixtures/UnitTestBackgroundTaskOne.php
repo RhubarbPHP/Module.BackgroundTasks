@@ -30,6 +30,6 @@ class UnitTestBackgroundTaskOne extends BackgroundTask
      */
     public function execute(BackgroundTaskStatus $status)
     {
-        touch( "cache/background-task-test.txt" );
+        touch("cache/background-task-test.txt");
     }
 }

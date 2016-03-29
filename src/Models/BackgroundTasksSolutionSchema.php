@@ -18,7 +18,7 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 
-require_once __DIR__.'/../../../module-stem/src/Schema/SolutionSchema.php';
+require_once __DIR__ . '/../../../module-stem/src/Schema/SolutionSchema.php';
 
 use Rhubarb\Stem\Schema\SolutionSchema;
 
@@ -28,6 +28,6 @@ class BackgroundTasksSolutionSchema extends SolutionSchema
     {
         parent::__construct(0.12);
 
-        $this->addModel("BackgroundTaskStatus", __NAMESPACE__.'\BackgroundTaskStatus');
+        $this->addModel("BackgroundTaskStatus", __NAMESPACE__ . '\BackgroundTaskStatus');
     }
 }
