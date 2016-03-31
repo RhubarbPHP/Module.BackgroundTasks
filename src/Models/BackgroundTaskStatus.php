@@ -21,6 +21,7 @@ namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 require_once __DIR__ . '/../../../module-stem/src/Models/Model.php';
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
+use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
 use Rhubarb\Stem\Models\Model;
 use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnumColumn;
 use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
@@ -78,10 +79,12 @@ class BackgroundTaskStatus extends Model
     public function start()
     {
         $class = $this->TaskClass;
+        /** @var BackgroundTask $task */
         $task = new $class();
 
         try {
-            $task->setShellArguments();
+            global $argv;
+            $task->setShellArguments($argv);
             $task->execute($this);
 
             $this->TaskStatus = "Complete";
