@@ -18,6 +18,7 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks;
 
+use Rhubarb\Crown\Context;
 use Rhubarb\Crown\Logging\Log;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
