@@ -18,7 +18,7 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 
-require_once __DIR__ . '/../../../module-stem/src/Models/Model.php';
+require_once VENDOR_DIR . '/rhubarbphp/module-stem/src/Models/Model.php';
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
 use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;

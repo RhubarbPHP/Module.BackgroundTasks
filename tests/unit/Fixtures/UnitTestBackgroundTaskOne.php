@@ -30,6 +30,10 @@ class UnitTestBackgroundTaskOne extends BackgroundTask
      */
     public function execute(BackgroundTaskStatus $status)
     {
+        if (!file_exists("cache")){
+            mkdir("cache");
+        }
+
         touch("cache/background-task-test.txt");
     }
 }

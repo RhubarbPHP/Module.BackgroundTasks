@@ -1,0 +1,2 @@
+tests\unit\BackgroundTaskTest.php:testBackgroundTaskRuns
+tests\unit\BackgroundTaskTest.php:testBackgroundTaskRunsInBackground

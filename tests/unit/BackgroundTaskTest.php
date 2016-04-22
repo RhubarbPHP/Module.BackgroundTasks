@@ -2,8 +2,8 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Tests;
 
-use Rhubarb\Crown\Tests\AppTestCase;
-use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTasksSolutionSchema;
+use Rhubarb\Crown\Tests\Fixtures\TestCases\RhubarbTestCase;
+use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTasksModule;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskOne;
 use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskTwo;
@@ -24,17 +24,15 @@ use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskTwo;
  *  limitations under the License.
  */
 
-class BackgroundTaskTest extends AppTestCase
+class BackgroundTaskTest extends RhubarbTestCase
 {
     const TEST_FILE = "cache/background-task-test.txt";
 
-    public static function setUpBeforeClass()
+    protected function setUp()
     {
-        parent::setUpBeforeClass();
+        parent::setUp();
 
-        // Make sure the unit testing database has our table - we'll need it later.
-        $schema = new BackgroundTasksSolutionSchema();
-        $schema->checkModelSchemas();
+        $this->application->registerModule(new BackgroundTasksModule());
     }
 
     private function removeTestFile()
