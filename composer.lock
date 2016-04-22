@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "211f4e01fa0636e212e7cd116ab8330e",
+    "hash": "0a287875800f4e146ff7811a0251a7a1",
     "packages": [
         {
             "name": "rhubarbphp/module-leaf",
