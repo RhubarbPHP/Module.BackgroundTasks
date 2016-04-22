@@ -18,14 +18,14 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
-use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Leaf\Views\HtmlView;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 class BackgroundTaskProgressView extends HtmlView
 {
     protected function printViewContent()
     {
-        $backgroundTaskId = $this->GetData("BackgroundTaskID");
+        $backgroundTaskId = $this->getData("BackgroundTaskID");
         $task = new BackgroundTaskStatus($backgroundTaskId);
 
         ?>

@@ -18,12 +18,12 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
-use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Leaf\Presenters\HtmlPresenter;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 class BackgroundTaskPresenter extends HtmlPresenter
 {
-    public function setBackgroundTaskStatusId( $backgroundTaskStatusId )
+    public function setBackgroundTaskStatusId($backgroundTaskStatusId)
     {
         $this->model->BackgroundTaskStatusID = $backgroundTaskStatusId;
     }
@@ -40,8 +40,8 @@ class BackgroundTaskPresenter extends HtmlPresenter
     {
         parent::configureView();
 
-        $this->view->attachEventHandler( "GetProgress", function() {
-            $status = new BackgroundTaskStatus( $this->model->BackgroundTaskStatusID );
+        $this->view->attachEventHandler("GetProgress", function () {
+            $status = new BackgroundTaskStatus($this->model->BackgroundTaskStatusID);
 
             $progress = new \stdClass();
             $progress->percentageComplete = $status->PercentageComplete;

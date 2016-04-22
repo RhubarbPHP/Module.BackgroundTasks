@@ -20,8 +20,8 @@ namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
 
 require_once __DIR__ . '/BackgroundTaskPresenter.php';
 
-use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Crown\Context;
+use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 class BackgroundTaskFullFocusPresenter extends BackgroundTaskPresenter
 {

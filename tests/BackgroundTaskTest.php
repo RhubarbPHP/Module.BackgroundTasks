@@ -2,11 +2,11 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Tests;
 
+use Rhubarb\Crown\Tests\AppTestCase;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTasksSolutionSchema;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskOne;
 use Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures\UnitTestBackgroundTaskTwo;
-use Rhubarb\Crown\Tests\AppTestCase;
 
 /*
  *	Copyright 2015 RhubarbPHP

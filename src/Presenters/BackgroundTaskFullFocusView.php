@@ -25,8 +25,8 @@ class BackgroundTaskFullFocusView extends HtmlView
     public function getDeploymentPackage()
     {
         $package = parent::getDeploymentPackage();
-        $package->resourcesToDeploy[] = __DIR__.'/BackgroundTaskViewBridge.js';
-        $package->resourcesToDeploy[] = __DIR__.'/BackgroundTaskFullFocusViewBridge.js';
+        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskViewBridge.js';
+        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskFullFocusViewBridge.js';
 
         return $package;
     }

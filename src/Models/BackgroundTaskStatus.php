@@ -21,21 +21,22 @@ namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 require_once __DIR__ . '/../../../module-stem/src/Models/Model.php';
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
+use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
 use Rhubarb\Stem\Models\Model;
-use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnum;
-use Rhubarb\Stem\Schema\Columns\AutoIncrement;
-use Rhubarb\Stem\Schema\Columns\Decimal;
-use Rhubarb\Stem\Schema\Columns\Integer;
-use Rhubarb\Stem\Schema\Columns\Json;
-use Rhubarb\Stem\Schema\Columns\LongString;
-use Rhubarb\Stem\Schema\Columns\String;
+use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnumColumn;
+use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
+use Rhubarb\Stem\Schema\Columns\DecimalColumn;
+use Rhubarb\Stem\Schema\Columns\IntegerColumn;
+use Rhubarb\Stem\Schema\Columns\JsonColumn;
+use Rhubarb\Stem\Schema\Columns\LongStringColumn;
+use Rhubarb\Stem\Schema\Columns\StringColumn;
 use Rhubarb\Stem\Schema\ModelSchema;
 
 /**
  * Allows for execution of background tasks and persistence of progress data in a model.
  *
  * @property string $TaskClass
- * @property float  $PercentageComplete
+ * @property float $PercentageComplete
  * @property string $Message
  * @property string $TaskStatus       The status of the task: Running, Complete or Failed
  * @property string $ExceptionDetails If the task failed, exception details will be contained here.
@@ -53,17 +54,17 @@ class BackgroundTaskStatus extends Model
      */
     protected function createSchema()
     {
-        $schema = new ModelSchema( "tblBackgroundTaskStatus" );
+        $schema = new ModelSchema("tblBackgroundTaskStatus");
         $schema->addColumn(
-                new AutoIncrement( "BackgroundTaskStatusID" ),
-                new String( "TaskClass", 300 ),
-                new MySqlEnum( "TaskStatus", self::TASK_STATUS_RUNNING,
-                        [ self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING ] ),
-                new Decimal( "PercentageComplete", 5, 2, 0 ),
-                new String( "Message", 200 ),
-                new LongString( "ExceptionDetails" ),
-                new Json( "TaskSettings", null, true ),
-                new Integer( "ProcessID" )
+            new AutoIncrementColumn("BackgroundTaskStatusID"),
+            new StringColumn("TaskClass", 300),
+            new MySqlEnumColumn("TaskStatus", self::TASK_STATUS_RUNNING,
+                [self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING]),
+            new DecimalColumn("PercentageComplete", 5, 2, 0),
+            new StringColumn("Message", 200),
+            new LongStringColumn("ExceptionDetails"),
+            new JsonColumn("TaskSettings", null, true),
+            new IntegerColumn("ProcessID")
         );
 
         return $schema;
@@ -78,14 +79,16 @@ class BackgroundTaskStatus extends Model
     public function start()
     {
         $class = $this->TaskClass;
+        /** @var BackgroundTask $task */
         $task = new $class();
 
         try {
-            $task->setShellArguments();
-            $task->execute( $this );
+            global $argv;
+            $task->setShellArguments($argv);
+            $task->execute($this);
 
             $this->TaskStatus = "Complete";
-        } catch( RhubarbException $er ) {
+        } catch (RhubarbException $er) {
             $this->TaskStatus = "Failed";
             $this->ExceptionDetails = $er->getMessage() . "\r\n\r\n" . $er->getTraceAsString();
         }
