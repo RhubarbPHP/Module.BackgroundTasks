@@ -152,7 +152,7 @@ class MyView extends HtmlView
     public function configurePresenters()
     {
         if ( $this->backgroundTaskStatusId != null ) {
-            $this->presenters["Progress"]->setBackgroundTaskStatusId( $this->backgroundTaskStatusId );
+            $this->leaves["Progress"]->setBackgroundTaskStatusId( $this->backgroundTaskStatusId );
         }
     }
 }
@@ -326,17 +326,17 @@ class DemoView extends HtmlView
     {
         if ( $this->longTaskId ) {
             // If we have a background task ID we need to pass this to our progress presenter
-            $this->presenters[ "Progress" ]->setBackgroundTaskId = $this->longTaskId;
+            $this->leaves[ "Progress" ]->setBackgroundTaskId = $this->longTaskId;
         }
     }
 
     public function printViewContent()
     {
-        print $this->presenters[ "DoLongTask" ];
+        print $this->leaves[ "DoLongTask" ];
 
         if ( $this->longTaskId ) {
             // Only if we have a background task should we print the progress presenter.
-            print $this->presenters[ "Progress" ];
+            print $this->leaves[ "Progress" ];
         }
     }
 }
@@ -370,6 +370,6 @@ remaining thing to do is to show the progress bar if it has been configured this
 // In printViewContent():
 
 if ($this->showProgressBar) {
-    print $this->presenters["Progress"];
+    print $this->leaves["Progress"];
 }
 ~~~
