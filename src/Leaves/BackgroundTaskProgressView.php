@@ -16,16 +16,22 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
-use Rhubarb\Leaf\Views\HtmlView;
+use Rhubarb\Leaf\Leaves\LeafDeploymentPackage;
+use Rhubarb\Leaf\Views\View;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
-class BackgroundTaskProgressView extends HtmlView
+class BackgroundTaskProgressView extends View
 {
+    /**
+     * @var BackgroundTaskModel
+     */
+    protected $model;
+
     protected function printViewContent()
     {
-        $backgroundTaskId = $this->getData("BackgroundTaskID");
+        $backgroundTaskId = $this->model->backgroundTaskStatusId;
         $task = new BackgroundTaskStatus($backgroundTaskId);
 
         ?>
@@ -38,14 +44,12 @@ class BackgroundTaskProgressView extends HtmlView
 
     public function getDeploymentPackage()
     {
-        $package = parent::getDeploymentPackage();
-        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskViewBridge.js';
-        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskProgressViewBridge.js';
-
-        return $package;
+        return new LeafDeploymentPackage(
+            __DIR__ . '/BackgroundTaskViewBridge.js',
+            __DIR__ . '/BackgroundTaskProgressViewBridge.js' );
     }
 
-    protected function getClientSideViewBridgeName()
+    protected function getViewBridgeName()
     {
         return "BackgroundTaskProgressViewBridge";
     }

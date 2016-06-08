@@ -188,11 +188,11 @@ The normal pattern for using a full focus background task is to host it as a 'st
 After the background task has started (triggered by the click of a button for example), the step is changed
 to the full focus presenter which has already been configured with the full focus presenter.
 
-The BackgroundTaskFullFocusPresenter will trigger a server side event when the task completes and this will be
+The BackgroundTaskFullFocus will trigger a server side event when the task completes and this will be
 either as a normal post back, or via an XHR request. It can additionally be configured to redirect to a target URL
 (e.g. a payment complete page) instead of handling the event directly.
 
-A BackgroundTaskFullFocusPresenter must be constructed with a view that extends BackgroundTaskFullFocusView as an
+A BackgroundTaskFullFocus must be constructed with a view that extends BackgroundTaskFullFocusView as an
 argument to supply the content for the 'holding' page.
 
 ~~~ php
@@ -202,7 +202,7 @@ class MySwitchedPresenter extends SwitchedPresenter
     {
         $presenters = [
             "payment" => $payment = new PaymentDetailsPresenter(),
-            "please-wait" => $pleaseWait = new BackgroundTaskFullFocusPresenter( new PaymentProcessingView() ),
+            "please-wait" => $pleaseWait = new BackgroundTaskFullFocus( new PaymentProcessingView() ),
             "thanks" => new ThanksPresenter()
         ];
 
@@ -244,7 +244,7 @@ class MySwitchedPresenter extends SwitchedPresenter
     {
         $presenters = [
             "payment" => $payment = new PaymentDetailsPresenter(),
-            "please-wait" => $pleaseWait = new BackgroundTaskFullFocusPresenter( new PaymentProcessingView() ),
+            "please-wait" => $pleaseWait = new BackgroundTaskFullFocus( new PaymentProcessingView() ),
             "thanks" => new ThanksPresenter()
         ];
 
@@ -311,9 +311,9 @@ class DemoView extends HtmlView
 {
     public $longTaskId = null;
 
-    protected function createPresenters()
+    protected function createSubLeaves()
     {
-        $this->addPresenters(
+        $this->registerSubLeaf(
             new Button( "DoLongTask", "Reticulate The Splines", function()
             {
                 $this->raiseEvent( "StartLongTask" );
@@ -346,13 +346,13 @@ class DemoView extends HtmlView
 
 Sometimes you want to show a progress bar on the site not as a direct consequence of the user interacting
 with your page, but as a consequence of **any** user starting a background task. This is quite simple to
-achieve - simply create a BackgroundTaskProgressPresenter and set it's task id like this:
+achieve - simply create a BackgroundTask and set it's task id like this:
 
 ~~~ php
-// In createPresenters():
+// In createSubLeaves():
 
-$this->AddPresenters(
-    $progress = new BackgroundTaskProgressPresenter( "Progress" )
+$this->registerSubLeaf(
+    $progress = new BackgroundTask( "Progress" )
 );
 
 try {

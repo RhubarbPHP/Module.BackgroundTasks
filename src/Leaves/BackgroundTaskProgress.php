@@ -16,23 +16,14 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
-use Rhubarb\Leaf\Views\HtmlView;
+require_once __DIR__ . '/BackgroundTask.php';
 
-class BackgroundTaskFullFocusView extends HtmlView
+class BackgroundTaskProgress extends BackgroundTask
 {
-    public function getDeploymentPackage()
+    protected function getViewClass()
     {
-        $package = parent::getDeploymentPackage();
-        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskViewBridge.js';
-        $package->resourcesToDeploy[] = __DIR__ . '/BackgroundTaskFullFocusViewBridge.js';
-
-        return $package;
-    }
-
-    protected function getClientSideViewBridgeName()
-    {
-        return "BackgroundTaskFullFocusViewBridge";
+        return BackgroundTaskProgressView::class;
     }
 }

@@ -8,7 +8,7 @@ bridge.prototype.constructor = bridge;
 
 bridge.prototype.onComplete = function()
 {
-    this.raisePostBackEvent("TaskComplete", this.model.BackgroundTaskStatusID );
+    this.raisePostBackEvent("taskComplete", this.model.backgroundTaskStatusId );
 };
 
 window.rhubarb.viewBridgeClasses.BackgroundTaskFullFocusViewBridge = bridge;

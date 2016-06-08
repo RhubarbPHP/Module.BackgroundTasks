@@ -16,11 +16,11 @@ bridge.prototype.onStateLoaded = function () {
     }
 
     // If we've been given a new background task status ID we need to start polling.
-    if (this.model.BackgroundTaskStatusID) {
-        if ( !this.PreviousBackgroundTaskStatusID ||
-             ( this.PreviousBackgroundTaskStatusID != this.model.BackgroundTaskStatusID ) ) {
+    if (this.model.backgroundTaskStatusId) {
+        if ( !this.PreviousbackgroundTaskStatusId ||
+             ( this.PreviousbackgroundTaskStatusId != this.model.backgroundTaskStatusId ) ) {
 
-                this.PreviousBackgroundTaskStatusID = this.model.BackgroundTaskStatusID;
+                this.PreviousbackgroundTaskStatusId = this.model.backgroundTaskStatusId;
                 this.startPolling();
         }
     }
@@ -29,13 +29,13 @@ bridge.prototype.onStateLoaded = function () {
 bridge.prototype.pollProgress = function () {
 
     // If we don't have a background task to poll, we shouldn't bother.
-    if (!this.model.BackgroundTaskStatusID) {
+    if (!this.model.backgroundTaskStatusId) {
         return;
     }
 
     var self = this;
 
-    this.raiseServerEvent("GetProgress", function (response) {
+    this.raiseServerEvent("getProgress", function (response) {
         if (!response.isRunning) {
 
             clearInterval(self.pollInterval);
@@ -58,7 +58,7 @@ bridge.prototype.startPolling = function () {
 };
 
 bridge.prototype.setBackgroundTaskStatusId = function (backgroundTaskStatusId) {
-    this.model.BackgroundTaskStatusID = backgroundTaskStatusId;
+    this.model.backgroundTaskStatusId = backgroundTaskStatusId;
     this.pollProgress();
 };
 

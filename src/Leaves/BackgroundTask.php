@@ -16,32 +16,31 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
-use Rhubarb\Leaf\Presenters\HtmlPresenter;
+use Rhubarb\Leaf\Leaves\HtmlPresenter;
+use Rhubarb\Leaf\Leaves\Leaf;
+use Rhubarb\Leaf\Leaves\LeafModel;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
-class BackgroundTaskPresenter extends HtmlPresenter
+abstract class BackgroundTask extends Leaf
 {
+    /**
+     * @var BackgroundTaskModel
+     */
+    protected $model;
+
     public function setBackgroundTaskStatusId($backgroundTaskStatusId)
     {
-        $this->model->BackgroundTaskStatusID = $backgroundTaskStatusId;
+        $this->model->backgroundTaskStatusId = $backgroundTaskStatusId;
     }
 
-    protected function getPublicModelPropertyList()
+    protected function onModelCreated()
     {
-        $properties = parent::getPublicModelPropertyList();
-        $properties[] = "BackgroundTaskStatusID";
+        parent::onModelCreated();
 
-        return $properties;
-    }
-
-    protected function configureView()
-    {
-        parent::configureView();
-
-        $this->view->attachEventHandler("GetProgress", function () {
-            $status = new BackgroundTaskStatus($this->model->BackgroundTaskStatusID);
+        $this->model->getProgressEvent->attachHandler(function(){
+            $status = new BackgroundTaskStatus( $this->model->backgroundTaskStatusId );
 
             $progress = new \stdClass();
             $progress->percentageComplete = $status->PercentageComplete;
@@ -51,5 +50,15 @@ class BackgroundTaskPresenter extends HtmlPresenter
 
             return $progress;
         });
+    }
+
+    /**
+     * Should return a class that derives from LeafModel
+     *
+     * @return LeafModel
+     */
+    protected function createModel()
+    {
+        return new BackgroundTaskModel();
     }
 }

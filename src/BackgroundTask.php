@@ -79,7 +79,7 @@ abstract class BackgroundTask
             $additionalArgumentString .= escapeshellarg($argument);
         }
 
-        $command = "/usr/bin/env php " . realpath("vendor/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
+        $command = "/usr/bin/env php " . realpath(VENDOR_DIR."/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
 
         Log::debug("Launching background task " . $task->UniqueIdentifier, "BACKGROUND", $command);
 

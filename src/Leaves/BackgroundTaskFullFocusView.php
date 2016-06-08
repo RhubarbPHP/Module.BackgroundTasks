@@ -16,14 +16,22 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
-require_once __DIR__ . '/BackgroundTaskPresenter.php';
+use Rhubarb\Leaf\Leaves\LeafDeploymentPackage;
+use Rhubarb\Leaf\Views\View;
 
-class BackgroundTaskProgressPresenter extends BackgroundTaskPresenter
+class BackgroundTaskFullFocusView extends View
 {
-    protected function createView()
+    public function getDeploymentPackage()
     {
-        return new BackgroundTaskProgressView();
+        return new LeafDeploymentPackage(
+            __DIR__ . '/BackgroundTaskViewBridge.js',
+            __DIR__ . '/BackgroundTaskFullFocusViewBridge.js' );
+    }
+
+    protected function getViewBridgeName()
+    {
+        return "BackgroundTaskFullFocusViewBridge";
     }
 }

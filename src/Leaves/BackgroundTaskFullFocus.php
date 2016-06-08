@@ -16,47 +16,46 @@
  *  limitations under the License.
  */
 
-namespace Rhubarb\Scaffolds\BackgroundTasks\Presenters;
+namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
-require_once __DIR__ . '/BackgroundTaskPresenter.php';
-
-use Rhubarb\Crown\Context;
+use Rhubarb\Crown\Application;
+use Rhubarb\Crown\Events\Event;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
-class BackgroundTaskFullFocusPresenter extends BackgroundTaskPresenter
+class BackgroundTaskFullFocus extends BackgroundTask
 {
-    private $injectedView;
-
     private $acceptableWaitTime = false;
 
-    public function __construct(BackgroundTaskFullFocusView $view)
+    public $taskCompleteEvent;
+
+    public function __construct()
     {
         parent::__construct();
 
-        $this->injectedView = $view;
+        $this->taskCompleteEvent = new Event();
     }
 
-    protected function createView()
+    protected function getViewClass()
     {
-        return $this->injectedView;
+        return BackgroundTaskFullFocusView::class;
     }
 
     protected function processStartupEvents()
     {
         parent::processStartupEvents();
 
-        $context = new Context();
+        $context = Application::current()->context();
 
-        if (!$context->getIsAjaxRequest()) {
+        if (!$context->isXhrRequest()) {
             if ($this->acceptableWaitTime) {
 
                 usleep($this->acceptableWaitTime);
 
-                $status = new BackgroundTaskStatus($this->model->BackgroundTaskStatusID);
+                $status = new BackgroundTaskStatus($this->model->backgroundTaskStatusId);
                 $status->reload();
 
                 if (!$status->isRunning()) {
-                    $this->raiseEvent("TaskComplete", $status->UniqueIdentifier);
+                    $this->taskCompleteEvent->raise($status->UniqueIdentifier);
                 }
             }
         }
