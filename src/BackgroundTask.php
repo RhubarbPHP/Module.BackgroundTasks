@@ -20,6 +20,7 @@ namespace Rhubarb\Scaffolds\BackgroundTasks;
 
 use Rhubarb\Crown\Logging\Log;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Crown\Application;
 
 /**
  * Extend this class to create an executable BackgroundTask
@@ -34,9 +35,10 @@ abstract class BackgroundTask
     /**
      * Executes the long running code.
      *
+     * @param BackgroundTaskStatus $status
      * @return void
      */
-    public abstract function execute(BackgroundTaskStatus $status);
+    abstract public function execute(BackgroundTaskStatus $status);
 
     /**
      * If you need to provide additional arguments for the task runner (such as passing encrypted conenction
@@ -62,6 +64,8 @@ abstract class BackgroundTask
     /**
      * Initiates execution of the background task.
      *
+     * @param array $settings Settings which will be passed to the execute method of the BackgroundTask (must be JSON serialisable)
+     *
      * @return BackgroundTaskStatus The status object for this task.
      */
     public static function initiate($settings = [])
@@ -79,7 +83,9 @@ abstract class BackgroundTask
             $additionalArgumentString .= escapeshellarg($argument);
         }
 
-        $command = "/usr/bin/env php " . realpath(VENDOR_DIR."/rhubarbphp/rhubarb/platform/execute-cli.php") . " " . realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
+        $runningRhubarbAppClass = escapeshellarg(get_class(Application::current()));
+        $command = "rhubarb_app=$runningRhubarbAppClass /usr/bin/env php " . realpath(VENDOR_DIR . "/rhubarbphp/rhubarb/platform/execute-cli.php") . " " .
+            realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
 
         Log::debug("Launching background task " . $task->UniqueIdentifier, "BACKGROUND", $command);
 

@@ -5,6 +5,9 @@
 * TODO:     Windows support
 * TODO:     Restore PhpIdeConfig setting to allow debugging of running background tasks
 
+### 1.1.1
+* UPDATED:  rhubarb_app environment setting support to allow background tasks to work in new environment
+
 ### 1.1.0
 * UPDATED:	Stem 1.1 Support
 
