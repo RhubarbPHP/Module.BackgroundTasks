@@ -19,10 +19,12 @@
 namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 
 use Rhubarb\Crown\Exceptions\RhubarbException;
+use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
 use Rhubarb\Stem\Models\Model;
 use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnumColumn;
 use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
 use Rhubarb\Stem\Schema\Columns\DecimalColumn;
+use Rhubarb\Stem\Schema\Columns\IntegerColumn;
 use Rhubarb\Stem\Schema\Columns\JsonColumn;
 use Rhubarb\Stem\Schema\Columns\LongStringColumn;
 use Rhubarb\Stem\Schema\Columns\StringColumn;
@@ -37,6 +39,7 @@ use Rhubarb\Stem\Schema\ModelSchema;
  * @property string $TaskStatus The status of the task: Running, Complete or Failed
  * @property string $ExceptionDetails If the task failed, exception details will be contained here.
  * @property \stdClass $TaskSettings Settings to be passed to the task, stored as JSON
+ * @property int $ProcessID The PID for the background task process when it is executed
  */
 class BackgroundTaskStatus extends Model
 {
@@ -63,7 +66,8 @@ class BackgroundTaskStatus extends Model
             new DecimalColumn("PercentageComplete", 5, 2, 0),
             new StringColumn("Message", 200),
             new LongStringColumn("ExceptionDetails"),
-            new JsonColumn("TaskSettings", null, true)
+            new JsonColumn("TaskSettings", null, true),
+            new IntegerColumn("ProcessID")
         );
 
         return $schema;
@@ -78,10 +82,10 @@ class BackgroundTaskStatus extends Model
     public function start()
     {
         $class = $this->TaskClass;
+        /** @var BackgroundTask $task */
         $task = new $class();
 
         try {
-            $task->setShellArguments();
             $task->execute($this);
 
             $this->TaskStatus = "Complete";
