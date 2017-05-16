@@ -31,13 +31,10 @@ class BackgroundTaskProgressView extends View
 
     protected function printViewContent()
     {
-        $backgroundTaskId = $this->model->backgroundTaskStatusId;
-        $task = new BackgroundTaskStatus($backgroundTaskId);
-
         ?>
-        <div class="bar">
-            <div class="progress" style="width: <?= $task->PercentageComplete; ?>%"></div>
-            <p class="message"><?= $task->Message; ?></p>
+        <div class="bar _gauge">
+            <div class="progress _needle" style="width: 0%"></div>
+            <p class="message"></p>
         </div>
         <?php
     }

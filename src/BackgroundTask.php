@@ -1,96 +1,85 @@
 <?php
-
-/*
- *	Copyright 2015 RhubarbPHP
+/**
+ * Copyright (c) 2017 RhubarbPHP.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 namespace Rhubarb\Scaffolds\BackgroundTasks;
 
-use Rhubarb\Crown\Logging\Log;
+use Exception;
+use Rhubarb\Crown\Exceptions\RhubarbException;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
-use Rhubarb\Crown\Application;
 
-/**
- * Extend this class to create an executable BackgroundTask
- */
-abstract class BackgroundTask
+abstract class BackgroundTask extends Task
 {
     /**
-     * @var array If sent, shell arguments will be populated here when execute is ran.
+     * Executes a task and provisions a BackgroundTaskStatus model to store a persistent record of the state.
+     * @param Task $task The task to execute
+     * @param callable|null $progressReportedCallback An optional call back to receive progress events
+     * @param BackgroundTaskStatus|null $persistentStatus If you have a pre-provisioned BackgroundTaskStatus model it can be updated instead.
      */
-    private static $shellArguments = [];
-
-    /**
-     * Executes the long running code.
-     *
-     * @param BackgroundTaskStatus $status
-     * @return void
-     */
-    abstract public function execute(BackgroundTaskStatus $status);
-
-    /**
-     * If you need to provide additional arguments for the task runner (such as passing encrypted conenction
-     * details) you should return the arguments as an array here.
-     *
-     * @return array
-     */
-    protected static function getAdditionalTaskRunnerArguments()
+    public static function executeInBackground(Task $task, $progressReportedCallback = null, BackgroundTaskStatus $persistentStatus = null)
     {
-        return [];
-    }
-
-    /**
-     * Sets the shell arguments from the task-runner.php script
-     *
-     * @param $rawShellArguments
-     */
-    public static function setShellArguments($rawShellArguments)
-    {
-        self::$shellArguments = $rawShellArguments;
-    }
-
-    /**
-     * Initiates execution of the background task.
-     *
-     * @param array $settings Settings which will be passed to the execute method of the BackgroundTask (must be JSON serialisable)
-     *
-     * @return BackgroundTaskStatus The status object for this task.
-     */
-    public static function initiate($settings = [])
-    {
-        // Create an entry in our database.
-        $task = new BackgroundTaskStatus();
-        $task->TaskClass = get_called_class();
-        $task->TaskSettings = $settings;
-        $task->save();
-
-        $additionalArguments = static::getAdditionalTaskRunnerArguments();
-        $additionalArgumentString = "";
-
-        foreach ($additionalArguments as $argument) {
-            $additionalArgumentString .= escapeshellarg($argument);
+        if (!$persistentStatus){
+            $persistentStatus = new BackgroundTaskStatus();
+            $persistentStatus->TaskClass = get_class($task);
+            $persistentStatus->save();
         }
 
-        $runningRhubarbAppClass = escapeshellarg(get_class(Application::current()));
-        $command = "rhubarb_app=$runningRhubarbAppClass /usr/bin/env php " . realpath(VENDOR_DIR . "/rhubarbphp/rhubarb/platform/execute-cli.php") . " " .
-            realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
+        $lastStatus = new TaskStatus();
 
-        Log::debug("Launching background task " . $task->UniqueIdentifier, "BACKGROUND", $command);
+        try {
+            $task->execute(function(TaskStatus $status) use ($progressReportedCallback, &$lastStatus, &$persistentStatus){
 
-        exec($command);
+                $lastStatus = $status;
 
-        return $task;
+                $persistentStatus->PercentageComplete = $status->percentageComplete;
+                $persistentStatus->TaskStatus = $status->status;
+                $persistentStatus->Message = $status->message;
+
+                if ($progressReportedCallback){
+                    $progressReportedCallback($status);
+                }
+
+                $persistentStatus->save();
+            });
+
+            $persistentStatus->TaskStatus = "Complete";
+            $persistentStatus->save();
+
+            if ($progressReportedCallback){
+                // Output a final status of complete.
+                $lastStatus->percentageComplete = 100;
+                $lastStatus->status = BackgroundTaskStatus::TASK_STATUS_COMPLETE;
+                $progressReportedCallback($lastStatus);
+            }
+
+        } catch (Exception $er) {
+            $persistentStatus->TaskStatus = "Failed";
+            $persistentStatus->ExceptionDetails = $er->getMessage() . "\r\n\r\n" . $er->getTraceAsString();
+            $persistentStatus->save();
+
+            if ($progressReportedCallback){
+                // Output a final status of complete.
+                $lastStatus->status = BackgroundTaskStatus::TASK_STATUS_FAILED;
+
+                if ($er instanceof RhubarbException) {
+                    $lastStatus->message = $er->getPublicMessage();
+                }
+
+                $progressReportedCallback($lastStatus);
+            }
+        }
     }
 }

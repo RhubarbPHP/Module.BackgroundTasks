@@ -18,10 +18,10 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Tests\Fixtures;
 
-use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
+use Rhubarb\Scaffolds\BackgroundTasks\Task;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
-class UnitTestBackgroundTaskTwo extends BackgroundTask
+class UnitTestBackgroundTaskTwo extends Task
 {
     /**
      * Executes the long running code.
