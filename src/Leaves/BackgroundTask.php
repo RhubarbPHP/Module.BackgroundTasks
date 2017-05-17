@@ -60,6 +60,8 @@ class BackgroundTask extends Leaf
         parent::onModelCreated();
 
         $this->model->triggerTaskEvent->attachHandler(function(){
+            ignore_user_abort(true);
+
             while(ob_get_level()>0) {
                 ob_end_clean();
             }
