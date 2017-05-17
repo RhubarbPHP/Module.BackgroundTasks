@@ -39,7 +39,7 @@ abstract class Task
      *                                 A TaskStatus object should be passed.
      * @return void
      */
-    abstract public function execute($statusCallback);
+    abstract public function execute(callable $statusCallback);
 
     /**
      * If you need to provide additional arguments for the task runner that you don't want stored in the
@@ -69,15 +69,17 @@ abstract class Task
      *
      * @return BackgroundTaskStatus The status object for this task.
      */
-    public static function initiate(...$settings)
+    public static function initiate($settings)
     {
         // Create an entry in our database.
-        $task = new BackgroundTaskStatus();
-        $task->TaskClass = get_called_class();
-        $task->TaskSettings = $settings;
-        $task->save();
+        $taskStatus = new BackgroundTaskStatus();
+        $taskStatus->TaskClass = get_called_class();
+        $taskStatus->TaskSettings = $settings;
+        $taskStatus->save();
 
-        $additionalArguments = static::getShellArguments();
+        $task = new static();
+
+        $additionalArguments = $task->getShellArguments();
         $additionalArgumentString = "";
 
         foreach ($additionalArguments as $argument) {
@@ -86,12 +88,12 @@ abstract class Task
 
         $runningRhubarbAppClass = escapeshellarg(get_class(Application::current()));
         $command = "rhubarb_app=$runningRhubarbAppClass /usr/bin/env php " . realpath(VENDOR_DIR . "/rhubarbphp/rhubarb/platform/execute-cli.php") . " " .
-            realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $task->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
+            realpath(__DIR__ . "/Scripts/task-runner.php") . " " . escapeshellarg(get_called_class()) . " " . $taskStatus->BackgroundTaskStatusID . " " . $additionalArgumentString . " > /dev/null 2>&1 &";
 
-        Log::debug("Launching background task " . $task->UniqueIdentifier, "BACKGROUND", $command);
+        Log::debug("Launching background task " . $taskStatus->UniqueIdentifier, "BACKGROUND", $command);
 
         exec($command);
 
-        return $task;
+        return $taskStatus;
     }
 }
