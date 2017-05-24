@@ -32,21 +32,22 @@ class BackgroundTask extends Leaf
      * @var BackgroundTaskModel
      */
     protected $model;
+
     /**
-     * @var \Rhubarb\Scaffolds\BackgroundTasks\Task
+     * @var callable
      */
-    private $task;
+    private $taskMaker;
 
     /**
      * @var Event Called to get the finale response object for client side digestion
      */
     public $getResultEvent;
 
-    public function __construct(\Rhubarb\Scaffolds\BackgroundTasks\Task $task, $name = "")
+    public function __construct(callable $taskMaker, $name = "")
     {
         parent::__construct($name);
 
-        $this->task = $task;
+        $this->taskMaker = $taskMaker;
         $this->getResultEvent = new Event();
     }
 
@@ -59,24 +60,35 @@ class BackgroundTask extends Leaf
     {
         parent::onModelCreated();
 
-        $this->model->triggerTaskEvent->attachHandler(function(){
+        $this->model->triggerTaskEvent->attachHandler(function(...$arguments){
+
+            $taskMaker = $this->taskMaker;
+            $task = $taskMaker(...$arguments);
+
             ignore_user_abort(true);
 
             while(ob_get_level()>0) {
                 ob_end_clean();
             }
 
-            \Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask::executeInBackground($this->task,function ($status) {
+            $lastStatus = null;
+            $result = \Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask::executeInBackground($task,function ($status) use ($lastStatus){
 
-                if ($status->status == BackgroundTaskStatus::TASK_STATUS_COMPLETE ||
-                    $status->status == BackgroundTaskStatus::TASK_STATUS_FAILED ){
-                    $status->result = $this->getResult();
-                }
+                $lastStatus = $status;
 
                 print json_encode($status) . "\r\n";
 
                 flush();
             });
+
+            if ($lastStatus->status == BackgroundTaskStatus::TASK_STATUS_COMPLETE ||
+                $lastStatus->status == BackgroundTaskStatus::TASK_STATUS_FAILED ){
+                $lastStatus->result = $this->getResult($result);
+            }
+
+            print json_encode($lastStatus) . "\r\n";
+
+            flush();
 
             exit;
         });
@@ -86,9 +98,11 @@ class BackgroundTask extends Leaf
      * Override to return a data structure that is passed to the client side onComplete method.
      * @return \stdClass
      */
-    protected function getResult()
+    protected function getResult($resultFromTask)
     {
-        return $this->getResultEvent->raise();
+        $response = $this->getResultEvent->raise($resultFromTask);
+
+        return $response ?? $resultFromTask;
     }
 
     /**

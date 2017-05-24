@@ -39,8 +39,10 @@ abstract class BackgroundTask extends Task
 
         $lastStatus = new TaskStatus();
 
+        $result = false;
+
         try {
-            $task->execute(function(TaskStatus $status) use ($progressReportedCallback, &$lastStatus, &$persistentStatus){
+            $result = $task->execute(function(TaskStatus $status) use ($progressReportedCallback, &$lastStatus, &$persistentStatus){
 
                 $lastStatus = $status;
 
@@ -81,5 +83,7 @@ abstract class BackgroundTask extends Task
                 $progressReportedCallback($lastStatus);
             }
         }
+
+        return $result;
     }
 }
