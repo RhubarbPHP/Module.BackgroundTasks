@@ -28,6 +28,12 @@ bridge.prototype.start = function(){
     var xmlhttp = this.raiseServerEvent.apply(this,argumentsArray);
 
     xmlhttp.onreadystatechange = function () {
+
+        // if the ready state is now 4 we've already processed our entire output.
+        if (xmlhttp.completed) {
+            return;
+        }
+
         // Get the last line, if we've missed any we don't care - it's just a status
         // update.
         var lines = xmlhttp.responseText.trim().split("\n");
@@ -38,9 +44,11 @@ bridge.prototype.start = function(){
             this.raiseClientEvent("OnProgressReported", progress);
 
             if (progress.status == "Complete"){
+                xmlhttp.completed = true;
                 this.onComplete(progress.result);
                 this.raiseClientEvent("OnComplete", progress.result);
             } else if (progress.status == "Failed"){
+                xmlhttp.completed = true;
                 this.onFailed(progress.result);
                 this.raiseClientEvent("OnFailed", progress.result);
             }

@@ -72,13 +72,18 @@ class BackgroundTask extends Leaf
             }
 
             $lastStatus = null;
-            $result = \Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask::executeInBackground($task,function ($status) use ($lastStatus){
+            $result = \Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask::executeInBackground($task,function ($status) use (&$lastStatus){
+
+                $status->percentageComplete = round($status->percentageComplete,0);
+
+                if ((!$lastStatus || ($status->percentageComplete != $lastStatus->percentageComplete))
+                    && ($status->status == BackgroundTaskStatus::TASK_STATUS_RUNNING)) {
+                    print json_encode($status) . "\r\n";
+
+                    flush();
+                }
 
                 $lastStatus = $status;
-
-                print json_encode($status) . "\r\n";
-
-                flush();
             });
 
             if ($lastStatus->status == BackgroundTaskStatus::TASK_STATUS_COMPLETE ||
