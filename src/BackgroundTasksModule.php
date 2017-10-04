@@ -23,6 +23,8 @@ use Rhubarb\Stem\Schema\SolutionSchema;
 
 class BackgroundTasksModule extends Module
 {
+    public static $debugServerName = "backgroundtask";
+
     protected function initialise()
     {
         parent::initialise();
