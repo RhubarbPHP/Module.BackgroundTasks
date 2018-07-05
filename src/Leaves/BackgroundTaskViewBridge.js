@@ -45,12 +45,12 @@ bridge.prototype.start = function(){
 
             if (progress.status == "Complete"){
                 xmlhttp.completed = true;
-                this.onComplete(progress.result);
-                this.raiseClientEvent("OnComplete", progress.result);
+                this.onComplete(progress);
+                this.raiseClientEvent("OnComplete", progress);
             } else if (progress.status == "Failed"){
                 xmlhttp.completed = true;
-                this.onFailed(progress.result);
-                this.raiseClientEvent("OnFailed", progress.result);
+                this.onFailed(progress);
+                this.raiseClientEvent("OnFailed", progress);
             }
         }
     }.bind(this);
