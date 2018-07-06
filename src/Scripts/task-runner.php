@@ -19,6 +19,7 @@
 namespace Rhubarb\Scaffolds\BackgroundTasks\Scripts;
 
 use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
+use Rhubarb\Scaffolds\BackgroundTasks\Task;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
 
 $taskClass = $argv[2];
@@ -37,9 +38,6 @@ if (!$taskId) {
 // See docs for more details on passing shell arguments.
 $additionalArguments = array_slice($argv, 4);
 
-/** @var BackgroundTask $taskClass */
-$taskClass::setShellArguments($additionalArguments);
-
 $pid = pcntl_fork();
 
 if ($pid) {
@@ -50,6 +48,12 @@ if (posix_setsid() < 0) {
     exit;
 }
 
-$task = new BackgroundTaskStatus($taskId);
-$task->ProcessID = getmypid();
-$task->start();
+$taskStatus = new BackgroundTaskStatus($taskId);
+$taskStatus->ProcessID = getmypid();
+$taskStatus->save();
+
+$taskClass = $taskStatus->TaskClass;
+$task = new $taskClass(...$taskStatus->TaskSettings);
+$task->setShellArguments($additionalArguments);
+
+BackgroundTask::executeInBackground($task, null, $taskStatus);

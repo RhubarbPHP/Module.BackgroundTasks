@@ -18,11 +18,14 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Models;
 
+use Exception;
 use Rhubarb\Crown\Exceptions\RhubarbException;
-use Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask;
+use Rhubarb\Scaffolds\BackgroundTasks\Task;
+use Rhubarb\Scaffolds\BackgroundTasks\TaskStatus;
 use Rhubarb\Stem\Models\Model;
 use Rhubarb\Stem\Repositories\MySql\Schema\Columns\MySqlEnumColumn;
 use Rhubarb\Stem\Schema\Columns\AutoIncrementColumn;
+use Rhubarb\Stem\Schema\Columns\DateTimeColumn;
 use Rhubarb\Stem\Schema\Columns\DecimalColumn;
 use Rhubarb\Stem\Schema\Columns\IntegerColumn;
 use Rhubarb\Stem\Schema\Columns\JsonColumn;
@@ -63,6 +66,8 @@ class BackgroundTaskStatus extends Model
                 self::TASK_STATUS_RUNNING,
                 [self::TASK_STATUS_COMPLETE, self::TASK_STATUS_FAILED, self::TASK_STATUS_RUNNING]
             ),
+            new DateTimeColumn("StartedDate"),
+            new DateTimeColumn("LastProgressDate"),
             new DecimalColumn("PercentageComplete", 5, 2, 0),
             new StringColumn("Message", 200),
             new LongStringColumn("ExceptionDetails"),
@@ -73,28 +78,15 @@ class BackgroundTaskStatus extends Model
         return $schema;
     }
 
-    /**
-     * Starts the background task by instantiating the task class and calling execute.
-     *
-     * @throws \Exception
-     * @throws \Rhubarb\Stem\Exceptions\ModelConsistencyValidationException
-     */
-    public function start()
+    protected function beforeSave()
     {
-        $class = $this->TaskClass;
-        /** @var BackgroundTask $task */
-        $task = new $class();
+        parent::beforeSave();
 
-        try {
-            $task->execute($this);
-
-            $this->TaskStatus = "Complete";
-        } catch (RhubarbException $er) {
-            $this->TaskStatus = "Failed";
-            $this->ExceptionDetails = $er->getMessage() . "\r\n\r\n" . $er->getTraceAsString();
+        if ($this->isNewRecord()){
+            $this->StartedDate = "now";
         }
 
-        $this->save();
+        $this->LastProgressDate = "now";
     }
 
     public function isRunning()

@@ -12,13 +12,13 @@ class BackgroundTaskModel extends LeafModel
 	/**
 	 * @var Event Raised when the view needs to know the task progress
 	 */
-	public $getProgressEvent;
+	public $triggerTaskEvent;
 
 	public function __construct()
 	{
 		parent::__construct();
 
-		$this->getProgressEvent = new Event();
+		$this->triggerTaskEvent = new Event();
 	}
 
 	protected function getExposableModelProperties()

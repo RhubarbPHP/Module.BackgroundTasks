@@ -6,22 +6,30 @@ var bridge = function (presenterPath)
 bridge.prototype = new window.rhubarb.viewBridgeClasses.BackgroundTaskViewBridge();
 bridge.prototype.constructor = bridge;
 
-bridge.prototype.attachEvents = function ()
+bridge.prototype.onReady = function ()
 {
-    var self = this;
-
+    this.viewNode.style.display = 'none';
     this.progressNode = this.viewNode.querySelector( '.progress' );
     this.messageNode = this.viewNode.querySelector( '.message' );
 };
 
 bridge.prototype.onProgressReported = function(progress)
 {
+    this.viewNode.style.display = 'block';
+
     this.progressNode.style.width = progress.percentageComplete + "%";
     this.messageNode.innerHTML = progress.message;
 };
 
-bridge.prototype.onComplete = function()
+bridge.prototype.onComplete = function(result)
 {
+    this.viewNode.style.display = 'none';
 };
+
+bridge.prototype.onFailed = function(result)
+{
+    this.viewNode.style.display = 'none';
+};
+
 
 window.rhubarb.viewBridgeClasses.BackgroundTaskProgressViewBridge = bridge;

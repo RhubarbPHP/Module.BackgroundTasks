@@ -18,17 +18,38 @@
 
 namespace Rhubarb\Scaffolds\BackgroundTasks\Leaves;
 
+use Rhubarb\Crown\Events\Event;
+use Rhubarb\Crown\Exceptions\RhubarbException;
 use Rhubarb\Leaf\Leaves\HtmlPresenter;
 use Rhubarb\Leaf\Leaves\Leaf;
 use Rhubarb\Leaf\Leaves\LeafModel;
 use Rhubarb\Scaffolds\BackgroundTasks\Models\BackgroundTaskStatus;
+use Rhubarb\Scaffolds\BackgroundTasks\TaskStatus;
 
-abstract class BackgroundTask extends Leaf
+class BackgroundTask extends Leaf
 {
     /**
      * @var BackgroundTaskModel
      */
     protected $model;
+
+    /**
+     * @var callable
+     */
+    private $taskMaker;
+
+    /**
+     * @var Event Called to get the finale response object for client side digestion
+     */
+    public $getResultEvent;
+
+    public function __construct(callable $taskMaker, $name = "")
+    {
+        parent::__construct($name);
+
+        $this->taskMaker = $taskMaker;
+        $this->getResultEvent = new Event();
+    }
 
     public function setBackgroundTaskStatusId($backgroundTaskStatusId)
     {
@@ -39,17 +60,54 @@ abstract class BackgroundTask extends Leaf
     {
         parent::onModelCreated();
 
-        $this->model->getProgressEvent->attachHandler(function(){
-            $status = new BackgroundTaskStatus( $this->model->backgroundTaskStatusId );
+        $this->model->triggerTaskEvent->attachHandler(function(...$arguments){
 
-            $progress = new \stdClass();
-            $progress->percentageComplete = $status->PercentageComplete;
-            $progress->message = $status->Message;
-            $progress->isRunning = $status->isRunning();
-            $progress->taskStatus = $status->TaskStatus;
+            $taskMaker = $this->taskMaker;
+            $task = $taskMaker(...$arguments);
 
-            return $progress;
+            ignore_user_abort(true);
+
+            while(ob_get_level()>0) {
+                ob_end_clean();
+            }
+
+            $lastStatus = null;
+            $result = \Rhubarb\Scaffolds\BackgroundTasks\BackgroundTask::executeInBackground($task,function ($status) use (&$lastStatus){
+
+                $status->percentageComplete = round($status->percentageComplete,0);
+
+                if ((!$lastStatus || ($status->percentageComplete != $lastStatus->percentageComplete))
+                    && ($status->status == BackgroundTaskStatus::TASK_STATUS_RUNNING)) {
+                    print json_encode($status) . "\r\n";
+
+                    flush();
+                }
+
+                $lastStatus = $status;
+            });
+
+            if ($lastStatus->status == BackgroundTaskStatus::TASK_STATUS_COMPLETE ||
+                $lastStatus->status == BackgroundTaskStatus::TASK_STATUS_FAILED ){
+                $lastStatus->result = $this->getResult($result);
+            }
+
+            print json_encode($lastStatus) . "\r\n";
+
+            flush();
+
+            exit;
         });
+    }
+
+    /**
+     * Override to return a data structure that is passed to the client side onComplete method.
+     * @return \stdClass
+     */
+    protected function getResult($resultFromTask)
+    {
+        $response = $this->getResultEvent->raise($resultFromTask);
+
+        return $response ?? $resultFromTask;
     }
 
     /**
@@ -60,5 +118,15 @@ abstract class BackgroundTask extends Leaf
     protected function createModel()
     {
         return new BackgroundTaskModel();
+    }
+
+    /**
+     * Returns the name of the standard view used for this leaf.
+     *
+     * @return string
+     */
+    protected function getViewClass()
+    {
+        return BackgroundTaskView::class;
     }
 }
