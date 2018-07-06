@@ -1,9 +1,7 @@
 # Change log
+### 2.0 
 
-### 1.0.x
-
-* TODO:     Windows support
-* TODO:     Restore PhpIdeConfig setting to allow debugging of running background tasks
+* CHANGED: Moved to using ajax trigger with JSON streaming instead of process forking.   
 
 ### 1.1.2
 
