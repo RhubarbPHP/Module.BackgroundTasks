@@ -14,7 +14,13 @@ bridge.prototype.onComplete = function (result) {
 bridge.prototype.onFailed = function () {
 };
 
+bridge.prototype.onStart = function () {
+};
+
 bridge.prototype.start = function(){
+
+    this.onStart();
+    this.raiseClientEvent("OnStart");
 
     var argumentsArray = [];
 

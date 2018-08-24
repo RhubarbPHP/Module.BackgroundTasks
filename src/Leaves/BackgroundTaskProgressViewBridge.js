@@ -13,6 +13,14 @@ bridge.prototype.onReady = function ()
     this.messageNode = this.viewNode.querySelector( '.message' );
 };
 
+bridge.prototype.onStart = function()
+{
+    this.viewNode.style.display = 'block';
+
+    this.progressNode.style.width = "0%";
+    this.messageNode.innerHTML = 'Please wait...';
+};
+
 bridge.prototype.onProgressReported = function(progress)
 {
     this.viewNode.style.display = 'block';

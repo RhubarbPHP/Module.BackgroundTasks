@@ -1,5 +1,12 @@
 # Change log
-### 2.0 
+
+### 2.0.1
+
+* ADDED: onStart method to BackgroundTaskViewBridge 
+* ADDED: OnStart client event raised after onStart is called in BackgroundTaskViewBridge
+* UPDATED: onStart in BackgroundTaskProgressViewBridge: Immediately display progress at 0% with text "Please Wait ..."
+
+### 2.0.0
 
 * CHANGED: Moved to using ajax trigger with JSON streaming instead of process forking.   
 
