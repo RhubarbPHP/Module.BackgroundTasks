@@ -36,7 +36,9 @@ bridge.prototype.start = function(){
     xmlhttp.onreadystatechange = function () {
 
         // if the ready state is now 4 we've already processed our entire output.
-        if (xmlhttp.completed) {
+        if (xmlhttp.completed || xmlhttp.readyState === 4) {
+            document.body.classList.remove("event-processing");
+
             return;
         }
 
