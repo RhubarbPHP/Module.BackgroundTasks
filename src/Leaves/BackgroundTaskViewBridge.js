@@ -36,7 +36,7 @@ bridge.prototype.start = function(){
     xmlhttp.onreadystatechange = function () {
 
         // if the ready state is now 4 we've already processed our entire output.
-        if (xmlhttp.completed || xmlhttp.readyState === 4) {
+        if (xmlhttp.completed) {
             document.body.classList.remove("event-processing");
 
             return;
@@ -53,10 +53,14 @@ bridge.prototype.start = function(){
 
             if (progress.status == "Complete"){
                 xmlhttp.completed = true;
+                document.body.classList.remove("event-processing");
+
                 this.onComplete(progress);
                 this.raiseClientEvent("OnComplete", progress);
             } else if (progress.status == "Failed"){
                 xmlhttp.completed = true;
+                document.body.classList.remove("event-processing");
+                
                 this.onFailed(progress);
                 this.raiseClientEvent("OnFailed", progress);
             }
